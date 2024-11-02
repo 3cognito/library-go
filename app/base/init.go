@@ -15,5 +15,7 @@ func New(configs config.Config, db *gorm.DB) *base {
 func (b *base) LoadControllers() appControllers {
 	var c appControllers
 
+	c.AuthC = b.WithAuthController()
+
 	return c
 }
