@@ -11,6 +11,10 @@ func NewUserRepo(db *gorm.DB) UserRepoInterface {
 	}
 }
 
+func (u *userRepo) BeginTrx() *gorm.DB {
+	return u.db.Begin()
+}
+
 func (u *userRepo) CreateUser(user *User) error {
 	return u.db.Create(user).Error
 }

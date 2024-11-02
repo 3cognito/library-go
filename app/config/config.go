@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 
+	"github.com/3cognito/library/app/utils"
 	"github.com/caarlos0/env/v11"
 	"github.com/joho/godotenv"
 )
@@ -22,9 +23,11 @@ type Database struct {
 }
 
 type Config struct {
-	ENV  string   `env:"ENV" envDefault:"dev"`
-	Port string   `env:"PORT,required"`
-	DB   Database `env:"" envPrefix:"DB_"`
+	ENV                       string   `env:"ENV" envDefault:"dev"`
+	Port                      string   `env:"PORT,required"`
+	DB                        Database `env:"" envPrefix:"DB_"`
+	AccessTokenExpiryDuration string   `env:"ACCESS_TOKEN_EXPIRY_DURATION,required"` //should be an integer in hours
+	AppJWTSecret              string   `env:"APP_JWT_SECRET,required"`
 }
 
 func Load() {
@@ -41,4 +44,6 @@ func Load() {
 	}
 
 	Configs = &config
+
+	utils.ParseAccessTokenExpiryTime(config.AccessTokenExpiryDuration) //panics if the access token expiry duration is not a valid number
 }
