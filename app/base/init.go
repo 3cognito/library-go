@@ -5,21 +5,15 @@ import (
 	"gorm.io/gorm"
 )
 
-func New(configs config.Config, db *gorm.DB) *applicationBase {
-	return &applicationBase{
+func New(configs config.Config, db *gorm.DB) *base {
+	return &base{
 		configs: configs,
 		db:      db,
 	}
 }
 
-func (b *applicationBase) LoadControllers() appControllers {
+func (b *base) LoadControllers() appControllers {
 	var c appControllers
-
-	return c
-}
-
-func (b *applicationBase) LoadAdminControllers() adminControllers {
-	var c adminControllers
 
 	return c
 }

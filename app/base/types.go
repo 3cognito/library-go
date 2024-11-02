@@ -5,13 +5,10 @@ import (
 	"gorm.io/gorm"
 )
 
-type applicationBase struct {
+type base struct {
 	configs config.Config
 	db      *gorm.DB
 }
 
 type appControllers struct {
-}
-
-type adminControllers struct {
 }

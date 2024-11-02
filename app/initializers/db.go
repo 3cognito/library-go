@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"github.com/3cognito/library/app/config"
+	"github.com/3cognito/library/app/modules/books"
+	"github.com/3cognito/library/app/modules/users"
 	"github.com/3cognito/library/app/utils"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -37,7 +39,9 @@ func ConnectDB() {
 		panic(err)
 	}
 
-	err = db.AutoMigrate()
+	err = db.AutoMigrate(
+		&users.User{}, &books.Book{},
+	)
 
 	if err != nil {
 		fmt.Println("Error migrating database: ", err)

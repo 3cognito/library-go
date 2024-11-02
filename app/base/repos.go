@@ -1,3 +1,7 @@
 package base
 
-//Load individual repos and load their dependencies here - dependencies should just be the db instance only
+import "github.com/3cognito/library/app/modules/users"
+
+func (b *base) WithUserRepo() users.UserRepoInterface {
+	return users.NewUserRepo(b.db)
+}
