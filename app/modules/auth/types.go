@@ -1,14 +1,16 @@
 package auth
 
 import (
+	"github.com/3cognito/library/app/modules/email"
 	"github.com/3cognito/library/app/modules/otp"
 	"github.com/3cognito/library/app/modules/users"
 	"github.com/gin-gonic/gin"
 )
 
 type authService struct {
-	userRepo   users.UserRepoInterface
-	otpService otp.OtpServiceInterface
+	userRepo     users.UserRepoInterface
+	otpService   otp.OtpServiceInterface
+	emailService email.EmailServiceInterface
 }
 
 type AuthServiceInterface interface {

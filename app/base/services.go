@@ -7,10 +7,10 @@ import (
 )
 
 func (b *base) WithAuthService() auth.AuthServiceInterface {
-	return auth.NewAuthService(b.WithUserRepo(), b.WithOtpService())
+	return auth.NewAuthService(b.WithUserRepo(), b.WithOtpService(), b.WithEmailService())
 }
 
-func (b *base) WithEmailService() email.EmailService {
+func (b *base) WithEmailService() email.EmailServiceInterface {
 	return email.NewEmailService(b.configs)
 }
 

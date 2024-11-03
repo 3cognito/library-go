@@ -15,10 +15,12 @@ import (
 func NewAuthService(
 	userRepo users.UserRepoInterface,
 	otpService otp.OtpServiceInterface,
+	emailService email.EmailServiceInterface,
 ) AuthServiceInterface {
 	return &authService{
-		userRepo:   userRepo,
-		otpService: otpService,
+		userRepo:     userRepo,
+		otpService:   otpService,
+		emailService: emailService,
 	}
 }
 

@@ -5,7 +5,7 @@ import (
 	"github.com/resend/resend-go/v2"
 )
 
-func NewEmailService(config config.Config) EmailService {
+func NewEmailService(config config.Config) EmailServiceInterface {
 	client := resend.NewClient(config.EmailApiKey)
 	return &emailService{
 		client: *client,
