@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"net/http"
+
 	"github.com/3cognito/library/app/utils"
 	"github.com/gin-gonic/gin"
 )
@@ -20,11 +22,16 @@ func (a *authController) SignUp(ctx *gin.Context) {
 		return
 	}
 
-	res, err := a.authService.SignUp(params)
-	if err != nil {
-		utils.JsonErrorResponse(ctx, 400, "signup unsuccessful", err.Error())
+	if !utils.IsValidEmail(params.Email) {
+		utils.JsonErrorResponse(ctx, http.StatusBadRequest, "signup unsuccessful", ErrInvalidEmail.Error())
 		return
 	}
 
-	utils.JsonSuccessResponse(ctx, 201, "signup successful", res)
+	res, err := a.authService.SignUp(params)
+	if err != nil {
+		utils.JsonErrorResponse(ctx, http.StatusBadRequest, "signup unsuccessful", err.Error())
+		return
+	}
+
+	utils.JsonSuccessResponse(ctx, http.StatusCreated, "signup successful", res)
 }
