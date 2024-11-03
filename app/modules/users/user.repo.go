@@ -1,6 +1,7 @@
 package users
 
 import (
+	"github.com/3cognito/library/app/utils"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -16,7 +17,8 @@ func (u *userRepo) BeginTrx() *gorm.DB {
 }
 
 func (u *userRepo) CreateUser(user *User) error {
-	return u.db.Create(user).Error
+	err := u.db.Create(user).Error
+	return utils.CheckUniqueConstrainstErr(err)
 }
 
 func (u *userRepo) GetUserByID(id uuid.UUID) (*User, error) {

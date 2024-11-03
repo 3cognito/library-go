@@ -19,7 +19,7 @@ type User struct {
 	Username          string         `gorm:"uniqueIndex;not null" json:"username"`
 	Country           string         `json:"country"`
 	City              string         `json:"city"`
-	ProfilePictureUrl string         `gorm:"unique" json:"profile_picture_url"`
+	ProfilePictureUrl *string        `gorm:"unique" json:"profile_picture_url"`
 	CreatedAt         time.Time      `gorm:"not null;type:TIMESTAMP;" json:"created_at"`
 	UpdatedAt         time.Time      `gorm:"not null;type:TIMESTAMP;" json:"updated_at"`
 	DeletedAt         gorm.DeletedAt `gorm:"type:TIMESTAMP; index"`
