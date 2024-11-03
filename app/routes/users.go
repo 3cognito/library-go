@@ -1,9 +1,21 @@
 package routes
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/3cognito/library/app/base"
+	"github.com/3cognito/library/app/config"
+	"github.com/3cognito/library/app/initializers"
+	"github.com/gin-gonic/gin"
+)
 
 func RouteHandlers(r *gin.Engine) {
-	// v1 := r.Group("api/v1")
+	app := base.New(*config.Configs, initializers.DB).LoadControllers()
+	v1 := r.Group("api/v1")
 
-	// AdminRouteHandler(r)
+	v1.POST("/", func(ctx *gin.Context) {
+		ctx.JSON(200, gin.H{
+			"message": "Hello, World!",
+		})
+	})
+
+	v1.POST("signup", app.AuthC.SignUp)
 }

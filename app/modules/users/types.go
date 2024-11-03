@@ -10,6 +10,7 @@ type userRepo struct {
 }
 
 type UserRepoInterface interface {
+	BeginTrx() *gorm.DB
 	CreateUser(user *User) error
 	GetUserByID(id uuid.UUID) (*User, error)
 	GetUserByEmail(email string) (*User, error)

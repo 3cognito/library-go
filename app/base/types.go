@@ -2,6 +2,7 @@ package base
 
 import (
 	"github.com/3cognito/library/app/config"
+	"github.com/3cognito/library/app/modules/auth"
 	"gorm.io/gorm"
 )
 
@@ -11,4 +12,5 @@ type base struct {
 }
 
 type appControllers struct {
+	AuthC auth.AuthControllerInterface
 }
