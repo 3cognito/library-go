@@ -1,6 +1,8 @@
 package otp
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -12,6 +14,15 @@ type otpRepo struct {
 type OtpRepoInterface interface {
 	CreateOtp(otp *Otp) error
 	GetOtpByUseCase(userId uuid.UUID, useCase string) (*Otp, error)
+}
+
+type otpService struct {
+	repo OtpRepoInterface
+}
+
+type OtpServiceInterface interface {
+	CreateOtp(userId uuid.UUID, useCase UseCase, expiresAt time.Time) (int, error)
+	GetOtpByUseCase(userId uuid.UUID, useCase UseCase) (int, error)
 }
 
 type UseCase string
