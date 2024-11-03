@@ -3,6 +3,7 @@ package users
 import (
 	"time"
 
+	"github.com/3cognito/library/app/utils"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -30,4 +31,12 @@ func (u *User) FullName() string {
 		return u.FirstName + " " + u.LastName
 	}
 	return u.FirstName + " " + u.MiddleName + " " + u.LastName
+}
+
+func (u *User) IsEmailVerified() bool {
+	return u.EmailVerifiedAt != nil
+}
+
+func (u *User) IsPasswordCorrect(password string) bool {
+	return utils.VerifyDataHash(password, u.Password)
 }

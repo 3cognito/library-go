@@ -21,7 +21,12 @@ type UserResponse struct {
 	City       string `json:"city,omitempty"`
 }
 
-type SignUpResponse struct {
+type LoggedInResponse struct {
 	Token string       `json:"token"`
 	User  UserResponse `json:"user"`
+}
+
+type LoginRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }

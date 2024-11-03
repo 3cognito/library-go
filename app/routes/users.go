@@ -17,5 +17,7 @@ func RouteHandlers(r *gin.Engine) {
 		})
 	})
 
+	//authentication
 	v1.POST("signup", app.AuthC.SignUp)
+	v1.POST("login", app.AuthC.Login)
 }
