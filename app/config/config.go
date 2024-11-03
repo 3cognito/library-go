@@ -28,6 +28,7 @@ type Config struct {
 	DB                        Database `env:"" envPrefix:"DB_"`
 	AccessTokenExpiryDuration string   `env:"ACCESS_TOKEN_EXPIRY_DURATION,required"` //should be an integer in hours
 	AppJWTSecret              string   `env:"APP_JWT_SECRET,required"`
+	EmailApiKey               string   `env:"EMAIL_API_KEY,required"`
 }
 
 func Load() {
