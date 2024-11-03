@@ -29,6 +29,8 @@ type Config struct {
 	AccessTokenExpiryDuration string   `env:"ACCESS_TOKEN_EXPIRY_DURATION,required"` //should be an integer in hours
 	AppJWTSecret              string   `env:"APP_JWT_SECRET,required"`
 	EmailApiKey               string   `env:"EMAIL_API_KEY,required"`
+	EmailFrom                 string   `env:"EMAIL_FROM,required"`
+	ReplyToEmail              string   `env:"REPLY_TO_EMAIL,required"`
 }
 
 func Load() {
