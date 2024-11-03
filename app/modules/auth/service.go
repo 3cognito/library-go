@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/3cognito/library/app/config"
+	"github.com/3cognito/library/app/modules/otp"
 	"github.com/3cognito/library/app/modules/users"
 	"github.com/3cognito/library/app/utils"
 	"github.com/golang-jwt/jwt/v5"
@@ -13,9 +14,11 @@ import (
 
 func NewAuthService(
 	userRepo users.UserRepoInterface,
+	otpService otp.OtpServiceInterface,
 ) AuthServiceInterface {
 	return &authService{
-		userRepo: userRepo,
+		userRepo:   userRepo,
+		otpService: otpService,
 	}
 }
 
@@ -47,6 +50,7 @@ func (a *authService) SignUp(data SignUpRequest) (LoggedInResponse, error) {
 
 	res.Token = token
 	utils.ConvertStruct(user, &res.User)
+	// otp := utils.GenerateOtp()
 
 	return res, nil
 }
