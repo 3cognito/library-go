@@ -19,8 +19,8 @@ func NewAuthService(
 	}
 }
 
-func (a *authService) SignUp(data SignUpRequest) (SignUpResponse, error) {
-	var res SignUpResponse
+func (a *authService) SignUp(data SignUpRequest) (LoggedInResponse, error) {
+	var res LoggedInResponse
 	user := &users.User{
 		FirstName:  strings.TrimSpace(data.FirstName),
 		MiddleName: strings.TrimSpace(data.MiddleName),
@@ -44,6 +44,25 @@ func (a *authService) SignUp(data SignUpRequest) (SignUpResponse, error) {
 		return res, tokenErr
 	}
 	tx.Commit()
+
+	res.Token = token
+	utils.ConvertStruct(user, &res.User)
+
+	return res, nil
+}
+
+func (a *authService) Login(data LoginRequest) (LoggedInResponse, error) {
+	var res LoggedInResponse
+	user, err := a.userRepo.GetUserByEmail(data.Email)
+	if err != nil || user.IsPasswordCorrect(data.Password) {
+		return res, ErrWrongEmailOrPassword
+	}
+
+	expiryDuration := utils.ParseAccessTokenExpiryTime(config.Configs.AccessTokenExpiryDuration)
+	token, tokenErr := generateAccessToken(user.ID, []byte(config.Configs.AppJWTSecret), expiryDuration)
+	if tokenErr != nil {
+		return res, tokenErr
+	}
 
 	res.Token = token
 	utils.ConvertStruct(user, &res.User)
