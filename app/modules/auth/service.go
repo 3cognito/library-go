@@ -54,7 +54,7 @@ func (a *authService) SignUp(data SignUpRequest) (LoggedInResponse, error) {
 func (a *authService) Login(data LoginRequest) (LoggedInResponse, error) {
 	var res LoggedInResponse
 	user, err := a.userRepo.GetUserByEmail(data.Email)
-	if err != nil || user.IsPasswordCorrect(data.Password) {
+	if err != nil || !user.IsPasswordCorrect(data.Password) {
 		return res, ErrWrongEmailOrPassword
 	}
 
