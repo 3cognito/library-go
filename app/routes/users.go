@@ -11,5 +11,11 @@ func RouteHandlers(r *gin.Engine) {
 	app := base.New(*config.Configs, initializers.DB).LoadControllers()
 	v1 := r.Group("api/v1")
 
-	v1.POST("/signup", app.AuthC.SignUp)
+	v1.POST("/", func(ctx *gin.Context) {
+		ctx.JSON(200, gin.H{
+			"message": "Hello, World!",
+		})
+	})
+
+	v1.POST("signup", app.AuthC.SignUp)
 }
