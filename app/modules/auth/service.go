@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/3cognito/library/app/config"
+	"github.com/3cognito/library/app/modules/email"
 	"github.com/3cognito/library/app/modules/otp"
 	"github.com/3cognito/library/app/modules/users"
 	"github.com/3cognito/library/app/utils"
@@ -48,7 +49,6 @@ func (a *authService) SignUp(data SignUpRequest) (LoggedInResponse, error) {
 		tx.Rollback()
 		return res, tokenErr
 	}
-	tx.Commit()
 
 	res.Token = token
 	utils.ConvertStruct(user, &res.User)

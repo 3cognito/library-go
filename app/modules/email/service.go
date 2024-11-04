@@ -14,6 +14,9 @@ func NewEmailService(config config.Config) EmailServiceInterface {
 }
 
 func (e *emailService) SendEmailToUser(recipient string, subject string, body string) error {
+	if e.config.ENV == config.Dev {
+		recipient = "delivered@resend.dev"
+	}
 	params := &resend.SendEmailRequest{
 		From:    e.config.EmailFrom,
 		To:      []string{recipient},
