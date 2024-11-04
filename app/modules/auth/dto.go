@@ -1,5 +1,7 @@
 package auth
 
+import "github.com/google/uuid"
+
 type SignUpRequest struct {
 	Email      string `json:"email"`
 	Password   string `json:"password"`
@@ -29,4 +31,9 @@ type LoggedInResponse struct {
 type LoginRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
+}
+
+type VerifyEmailRequest struct {
+	Otp    string    `json:"otp"`
+	UserID uuid.UUID `json:"user_id"`
 }

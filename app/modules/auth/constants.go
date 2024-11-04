@@ -9,6 +9,8 @@ import (
 var (
 	ErrInvalidEmail         = errors.New("invalid email address")
 	ErrWrongEmailOrPassword = errors.New("wrong email or password")
+	ErrOtpExpiredOrInvalid  = errors.New("otp expired or invalid")
+	ErrAccountNotFound      = errors.New("account not found")
 )
 
 var (

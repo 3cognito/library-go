@@ -59,7 +59,7 @@ func (a *authService) SignUp(data SignUpRequest) (LoggedInResponse, error) {
 	}
 	tx.Commit()
 
-	a.triggerEmailVerificationNotification(user.Email, otp)
+	a.triggerEmailVerificationNotification(user.Email, otp.Value)
 
 	return res, nil
 }
@@ -81,6 +81,31 @@ func (a *authService) Login(data LoginRequest) (LoggedInResponse, error) {
 	utils.ConvertStruct(user, &res.User)
 
 	return res, nil
+}
+
+func (a *authService) VerifyEmail(data VerifyEmailRequest) error {
+	user, err := a.userRepo.GetUserByID(data.UserID)
+	if err != nil {
+		return ErrAccountNotFound
+	}
+
+	otp, err := a.otpService.GetOtpByUseCase(data.UserID, otp.EmailVerifcation)
+	if err != nil || otp.Value != data.Otp {
+		return ErrOtpExpiredOrInvalid
+	}
+
+	if err := a.otpService.InValidateOtp(otp); err != nil {
+		//log error - returning user readable error
+		return ErrOtpExpiredOrInvalid
+	}
+
+	now := time.Now()
+	user.EmailVerifiedAt = &now
+	if err := a.userRepo.UpdateUser(user); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func generateAccessToken(userId uuid.UUID, jwtKey []uint8, expiryTime time.Time) (string, error) {

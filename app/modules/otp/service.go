@@ -14,13 +14,14 @@ func NewOtpService(repo OtpRepoInterface) OtpServiceInterface {
 }
 
 func (o *otpService) CreateOtp(userId uuid.UUID, useCase UseCase, expiresAt time.Time) (*Otp, error) {
+	retries := 3
+
 	//invalidate any existing otp for the user and use case
 	existingOtp, existingErr := o.GetOtpByUseCase(userId, useCase)
 	if existingErr == nil {
 		o.InValidateOtp(existingOtp)
 	}
 
-	retries := 3
 	otp := &Otp{
 		UserID:    userId,
 		UseCase:   string(useCase),
