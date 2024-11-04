@@ -22,3 +22,7 @@ func (o *otpRepo) GetOtpByUseCase(userId uuid.UUID, useCase string) (*Otp, error
 	err := o.db.Where("user_id = ? AND use_case = ? AND expires_at > ?", userId, useCase, time.Now()).First(&otp).Error
 	return &otp, err
 }
+
+func (o *otpRepo) SaveOtp(otp *Otp) error {
+	return o.db.Save(otp).Error
+}

@@ -14,6 +14,7 @@ type otpRepo struct {
 type OtpRepoInterface interface {
 	CreateOtp(otp *Otp) error
 	GetOtpByUseCase(userId uuid.UUID, useCase string) (*Otp, error)
+	SaveOtp(otp *Otp) error
 }
 
 type otpService struct {
@@ -21,8 +22,9 @@ type otpService struct {
 }
 
 type OtpServiceInterface interface {
-	CreateOtp(userId uuid.UUID, useCase UseCase, expiresAt time.Time) (string, error)
-	GetOtpByUseCase(userId uuid.UUID, useCase UseCase) (string, error)
+	CreateOtp(userId uuid.UUID, useCase UseCase, expiresAt time.Time) (*Otp, error)
+	GetOtpByUseCase(userId uuid.UUID, useCase UseCase) (*Otp, error)
+	InValidateOtp(otp *Otp) error
 }
 
 type UseCase string
