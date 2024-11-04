@@ -21,8 +21,8 @@ type otpService struct {
 }
 
 type OtpServiceInterface interface {
-	CreateOtp(userId uuid.UUID, useCase UseCase, expiresAt time.Time) (int, error)
-	GetOtpByUseCase(userId uuid.UUID, useCase UseCase) (int, error)
+	CreateOtp(userId uuid.UUID, useCase UseCase, expiresAt time.Time) (string, error)
+	GetOtpByUseCase(userId uuid.UUID, useCase UseCase) (string, error)
 }
 
 type UseCase string

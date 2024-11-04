@@ -13,7 +13,7 @@ func NewOtpService(repo OtpRepoInterface) OtpServiceInterface {
 	}
 }
 
-func (o *otpService) CreateOtp(userId uuid.UUID, useCase UseCase, expiresAt time.Time) (int, error) {
+func (o *otpService) CreateOtp(userId uuid.UUID, useCase UseCase, expiresAt time.Time) (string, error) {
 	retries := 3
 	otp := &Otp{
 		UserID:    userId,
@@ -35,10 +35,10 @@ func (o *otpService) CreateOtp(userId uuid.UUID, useCase UseCase, expiresAt time
 	return otp.Value, err
 }
 
-func (o *otpService) GetOtpByUseCase(userId uuid.UUID, useCase UseCase) (int, error) {
+func (o *otpService) GetOtpByUseCase(userId uuid.UUID, useCase UseCase) (string, error) {
 	otp, err := o.repo.GetOtpByUseCase(userId, string(useCase))
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 	return otp.Value, nil
 }

@@ -52,7 +52,14 @@ func (a *authService) SignUp(data SignUpRequest) (LoggedInResponse, error) {
 
 	res.Token = token
 	utils.ConvertStruct(user, &res.User)
-	// otp := utils.GenerateOtp()
+
+	otp, err := a.otpService.CreateOtp(user.ID, otp.EmailVerifcation, ADayHence)
+	if err != nil {
+		tx.Rollback()
+	}
+	tx.Commit()
+
+	a.triggerEmailVerificationNotification(user.Email, otp)
 
 	return res, nil
 }
