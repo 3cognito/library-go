@@ -43,7 +43,7 @@ func (a *authService) SignUp(data SignUpRequest) (LoggedInResponse, error) {
 		return res, err
 	}
 
-	expiryDuration := utils.ParseAccessTokenExpiryTime(config.Configs.AccessTokenExpiryDuration)
+	expiryDuration := utils.ParseAccessTokenExpiryDuration(config.Configs.AccessTokenExpiryDuration)
 	token, tokenErr := generateAccessToken(user.ID, []byte(config.Configs.AppJWTSecret), expiryDuration)
 	if tokenErr != nil {
 		tx.Rollback()
@@ -71,7 +71,7 @@ func (a *authService) Login(data LoginRequest) (LoggedInResponse, error) {
 		return res, ErrWrongEmailOrPassword
 	}
 
-	expiryDuration := utils.ParseAccessTokenExpiryTime(config.Configs.AccessTokenExpiryDuration)
+	expiryDuration := utils.ParseAccessTokenExpiryDuration(config.Configs.AccessTokenExpiryDuration)
 	token, tokenErr := generateAccessToken(user.ID, []byte(config.Configs.AppJWTSecret), expiryDuration)
 	if tokenErr != nil {
 		return res, tokenErr
@@ -108,11 +108,12 @@ func (a *authService) VerifyEmail(data VerifyEmailRequest) error {
 	return nil
 }
 
-func generateAccessToken(userId uuid.UUID, jwtKey []uint8, expiryTime time.Time) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"userId": userId.String(),
-		"exp":    expiryTime.Unix(),
-	})
+func generateAccessToken(userId uuid.UUID, jwtKey []uint8, expiryDuration time.Duration) (string, error) {
+	claims := jwt.RegisteredClaims{
+		Subject:   userId.String(),
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(expiryDuration)),
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	return token.SignedString(jwtKey)
 }

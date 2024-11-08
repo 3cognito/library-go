@@ -48,5 +48,5 @@ func Load() {
 
 	Configs = &config
 
-	utils.ParseAccessTokenExpiryTime(config.AccessTokenExpiryDuration) //panics if the access token expiry duration is not a valid number
+	utils.ParseAccessTokenExpiryDuration(config.AccessTokenExpiryDuration) //panics if the access token expiry duration is not a valid number
 }
