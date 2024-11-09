@@ -13,18 +13,22 @@ type FileData struct {
 	URL       string
 }
 
-func ValidateFile(file *multipart.FileHeader) (FileData, error) {
+func ValidateFile(file *multipart.FileHeader, fileType FileType) (FileData, error) {
 	var data FileData
 	if file == nil {
 		return data, ErrFileNotProvided
 	}
 
 	fileExtension := strings.ToLower(filepath.Ext(file.Filename))
-	if !isSupportedFileExtension(fileExtension) {
+	isSupported := (fileType == "image" && isSupportedImageExtension(fileExtension)) ||
+		(fileType == "book" && isSupportedBookExtension(fileExtension))
+
+	if !isSupported {
 		return data, ErrUnsupportedFileType
 	}
 
-	if file.Size > TenMegabytes {
+	isSizeValid := (fileType == "image" && file.Size <= TwoMegabytes) || (fileType == "book" && file.Size <= TenMegabytes)
+	if !isSizeValid {
 		return data, ErrFileTooLarge
 	}
 
@@ -35,7 +39,18 @@ func ValidateFile(file *multipart.FileHeader) (FileData, error) {
 	}, nil
 }
 
-func isSupportedFileExtension(fileName string) bool {
+func isSupportedImageExtension(fileName string) bool {
+	supportedExtensions := []string{"jpg", "jpeg", "png"}
+	for _, ext := range supportedExtensions {
+		if ext == fileName {
+			return true
+		}
+	}
+
+	return false
+}
+
+func isSupportedBookExtension(fileName string) bool {
 	supportedExtensions := []string{"pdf", "epub"}
 	for _, ext := range supportedExtensions {
 		if ext == fileName {
