@@ -18,6 +18,22 @@ func NewController(
 
 func (c *controller) CreateBook(ctx *gin.Context) {
 	var params CreateBookRequest
+	bookFile, bookFileErr := ctx.FormFile("bookFile")
+	if bookFileErr != nil {
+		utils.JsonErrorResponse(ctx, http.StatusBadRequest, BadRequest, bookFileErr.Error())
+		return
+	}
+
+	params.BookFile = bookFile
+
+	imageFile, imageFileErr := ctx.FormFile("imageFile")
+	if imageFileErr != nil {
+		utils.JsonErrorResponse(ctx, http.StatusBadRequest, BadRequest, imageFileErr.Error())
+		return
+	}
+
+	params.ImageFile = imageFile
+
 	userId, parseErr := uuid.Parse(ctx.GetString("userId"))
 	if parseErr != nil {
 		utils.JsonErrorResponse(ctx, http.StatusBadRequest, BadRequest, parseErr.Error())
