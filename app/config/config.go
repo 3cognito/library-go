@@ -31,6 +31,7 @@ type Config struct {
 	EmailApiKey               string   `env:"EMAIL_API_KEY,required"`
 	EmailFrom                 string   `env:"EMAIL_FROM,required"`
 	ReplyToEmail              string   `env:"REPLY_TO_EMAIL,required"`
+	CloudinaryURL             string   `env:"CLOUDINARY_URL,required"`
 }
 
 func Load() {
