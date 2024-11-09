@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/3cognito/library/app/config"
+	"github.com/3cognito/library/app/modules/email"
+	"github.com/3cognito/library/app/modules/otp"
 	"github.com/3cognito/library/app/modules/users"
 	"github.com/3cognito/library/app/utils"
 	"github.com/golang-jwt/jwt/v5"
@@ -13,9 +15,13 @@ import (
 
 func NewAuthService(
 	userRepo users.UserRepoInterface,
+	otpService otp.OtpServiceInterface,
+	emailService email.EmailServiceInterface,
 ) AuthServiceInterface {
 	return &authService{
-		userRepo: userRepo,
+		userRepo:     userRepo,
+		otpService:   otpService,
+		emailService: emailService,
 	}
 }
 
@@ -37,16 +43,23 @@ func (a *authService) SignUp(data SignUpRequest) (LoggedInResponse, error) {
 		return res, err
 	}
 
-	expiryDuration := utils.ParseAccessTokenExpiryTime(config.Configs.AccessTokenExpiryDuration)
+	expiryDuration := utils.ParseAccessTokenExpiryDuration(config.Configs.AccessTokenExpiryDuration)
 	token, tokenErr := generateAccessToken(user.ID, []byte(config.Configs.AppJWTSecret), expiryDuration)
 	if tokenErr != nil {
 		tx.Rollback()
 		return res, tokenErr
 	}
-	tx.Commit()
 
 	res.Token = token
 	utils.ConvertStruct(user, &res.User)
+
+	otp, err := a.otpService.CreateOtp(user.ID, otp.EmailVerifcation, ADayHence)
+	if err != nil {
+		tx.Rollback()
+	}
+	tx.Commit()
+
+	a.triggerEmailVerificationNotification(user.Email, otp.Value)
 
 	return res, nil
 }
@@ -58,7 +71,7 @@ func (a *authService) Login(data LoginRequest) (LoggedInResponse, error) {
 		return res, ErrWrongEmailOrPassword
 	}
 
-	expiryDuration := utils.ParseAccessTokenExpiryTime(config.Configs.AccessTokenExpiryDuration)
+	expiryDuration := utils.ParseAccessTokenExpiryDuration(config.Configs.AccessTokenExpiryDuration)
 	token, tokenErr := generateAccessToken(user.ID, []byte(config.Configs.AppJWTSecret), expiryDuration)
 	if tokenErr != nil {
 		return res, tokenErr
@@ -70,11 +83,37 @@ func (a *authService) Login(data LoginRequest) (LoggedInResponse, error) {
 	return res, nil
 }
 
-func generateAccessToken(userId uuid.UUID, jwtKey []uint8, expiryTime time.Time) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"userId": userId.String(),
-		"exp":    expiryTime.Unix(),
-	})
+func (a *authService) VerifyEmail(data VerifyEmailRequest) error {
+	user, err := a.userRepo.GetUserByID(data.UserID)
+	if err != nil {
+		return ErrAccountNotFound
+	}
+
+	otp, err := a.otpService.GetOtpByUseCase(data.UserID, otp.EmailVerifcation)
+	if err != nil || otp.Value != data.Otp {
+		return ErrOtpExpiredOrInvalid
+	}
+
+	if err := a.otpService.InValidateOtp(otp); err != nil {
+		//log error - returning user readable error
+		return ErrOtpExpiredOrInvalid
+	}
+
+	now := time.Now()
+	user.EmailVerifiedAt = &now
+	if err := a.userRepo.UpdateUser(user); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func generateAccessToken(userId uuid.UUID, jwtKey []uint8, expiryDuration time.Duration) (string, error) {
+	claims := jwt.RegisteredClaims{
+		Subject:   userId.String(),
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(expiryDuration)),
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	return token.SignedString(jwtKey)
 }

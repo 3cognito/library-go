@@ -10,7 +10,7 @@ type emailService struct {
 	config config.Config
 }
 
-type EmailService interface {
+type EmailServiceInterface interface {
 	SendEmailToUser(recipient string, subject string, body string) error
 }
 
