@@ -21,5 +21,5 @@ func ParseAccessTokenExpiryDuration(accessTokenExpiryDuration string) time.Durat
 		panic(err)
 	}
 
-	return time.Duration(num)
+	return time.Hour * time.Duration(num)
 }

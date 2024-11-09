@@ -16,6 +16,7 @@ type authService struct {
 type AuthServiceInterface interface {
 	SignUp(data SignUpRequest) (LoggedInResponse, error)
 	Login(data LoginRequest) (LoggedInResponse, error)
+	VerifyEmail(data VerifyEmailRequest) error
 }
 
 type authController struct {
@@ -25,4 +26,5 @@ type authController struct {
 type AuthControllerInterface interface {
 	SignUp(ctx *gin.Context)
 	Login(ctx *gin.Context)
+	VerifyEmail(ctx *gin.Context)
 }

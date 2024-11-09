@@ -5,6 +5,7 @@ import (
 
 	"github.com/3cognito/library/app/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 func NewAuthController(
@@ -55,4 +56,27 @@ func (a *authController) Login(ctx *gin.Context) {
 	}
 
 	utils.JsonSuccessResponse(ctx, http.StatusOK, "login successful", res)
+}
+
+func (a *authController) VerifyEmail(ctx *gin.Context) {
+	parsedUserId, parseErr := uuid.Parse(ctx.GetString("userId"))
+	if parseErr != nil {
+		utils.JsonErrorResponse(ctx, http.StatusBadRequest, "verification unsuccessful", parseErr.Error())
+		return
+	}
+
+	var params VerifyEmailRequest
+	params.UserID = parsedUserId
+
+	if !utils.ValidParams(ctx, &params) {
+		return
+	}
+
+	err := a.authService.VerifyEmail(params)
+	if err != nil {
+		utils.JsonErrorResponse(ctx, http.StatusBadRequest, "verification unsuccessful", err.Error())
+		return
+	}
+
+	utils.JsonSuccessResponse(ctx, http.StatusOK, "verification successful", nil)
 }
