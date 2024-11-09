@@ -38,3 +38,7 @@ func (u *userRepo) GetUserByUsername(username string) (*User, error) {
 	err := u.db.Where("username = ?", username).First(&user).Error
 	return &user, err
 }
+
+func (u *userRepo) UpdateUser(user *User) error {
+	return u.db.Save(user).Error
+}

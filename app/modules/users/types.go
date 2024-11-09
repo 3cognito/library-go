@@ -15,4 +15,5 @@ type UserRepoInterface interface {
 	GetUserByID(id uuid.UUID) (*User, error)
 	GetUserByEmail(email string) (*User, error)
 	GetUserByUsername(username string) (*User, error)
+	UpdateUser(user *User) error
 }

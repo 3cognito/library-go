@@ -13,8 +13,15 @@ func NewOtpService(repo OtpRepoInterface) OtpServiceInterface {
 	}
 }
 
-func (o *otpService) CreateOtp(userId uuid.UUID, useCase UseCase, expiresAt time.Time) (int, error) {
+func (o *otpService) CreateOtp(userId uuid.UUID, useCase UseCase, expiresAt time.Time) (*Otp, error) {
 	retries := 3
+
+	//invalidate any existing otp for the user and use case
+	existingOtp, existingErr := o.GetOtpByUseCase(userId, useCase)
+	if existingErr == nil {
+		o.InValidateOtp(existingOtp)
+	}
+
 	otp := &Otp{
 		UserID:    userId,
 		UseCase:   string(useCase),
@@ -32,13 +39,18 @@ func (o *otpService) CreateOtp(userId uuid.UUID, useCase UseCase, expiresAt time
 			}
 		}
 	}
-	return otp.Value, err
+	return otp, err
 }
 
-func (o *otpService) GetOtpByUseCase(userId uuid.UUID, useCase UseCase) (int, error) {
+func (o *otpService) GetOtpByUseCase(userId uuid.UUID, useCase UseCase) (*Otp, error) {
 	otp, err := o.repo.GetOtpByUseCase(userId, string(useCase))
 	if err != nil {
-		return 0, err
+		return otp, err
 	}
-	return otp.Value, nil
+	return otp, nil
+}
+
+func (o *otpService) InValidateOtp(otp *Otp) error {
+	otp.InValidate()
+	return o.repo.SaveOtp(otp)
 }

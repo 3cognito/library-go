@@ -5,7 +5,7 @@ import (
 	"github.com/resend/resend-go/v2"
 )
 
-func NewEmailService(config config.Config) EmailService {
+func NewEmailService(config config.Config) EmailServiceInterface {
 	client := resend.NewClient(config.EmailApiKey)
 	return &emailService{
 		client: *client,
@@ -14,6 +14,9 @@ func NewEmailService(config config.Config) EmailService {
 }
 
 func (e *emailService) SendEmailToUser(recipient string, subject string, body string) error {
+	if e.config.ENV == config.Dev {
+		recipient = "delivered@resend.dev"
+	}
 	params := &resend.SendEmailRequest{
 		From:    e.config.EmailFrom,
 		To:      []string{recipient},
