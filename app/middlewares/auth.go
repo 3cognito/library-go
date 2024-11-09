@@ -13,49 +13,57 @@ import (
 	"github.com/google/uuid"
 )
 
-func AuthMiddleware(ctx *gin.Context) {
+func ValidateAuthToken(ctx *gin.Context) (*users.User, error) {
 	auth := ctx.GetHeader("Authorization")
 	extractedToken, extractionErr := extractBearerToken(auth)
 	if extractionErr != nil {
-		utils.JsonErrorResponse(ctx, http.StatusUnauthorized, "unauthorized", extractionErr.Error())
-		ctx.Abort()
-		return
+		return nil, extractionErr
 	}
 
 	claims := jwt.RegisteredClaims{}
 	token, err := jwt.ParseWithClaims(extractedToken, &claims, func(token *jwt.Token) (any, error) {
-		return config.Configs.AppJWTSecret, nil
+		return []byte(config.Configs.AppJWTSecret), nil
 	})
 
 	if err != nil || !token.Valid {
-		utils.JsonErrorResponse(ctx, http.StatusUnauthorized, "unauthorized", ErrInvalidToken.Error())
-		ctx.Abort()
-		return
+		return nil, ErrInvalidOrExpiredToken
 	}
 
 	userId := uuid.MustParse(claims.Subject)
 
-	if verifyErr := verifyAuthUser(userId); verifyErr != nil {
-		utils.JsonErrorResponse(ctx, http.StatusUnauthorized, "unauthorized", verifyErr.Error())
+	user, userErr := users.NewUserRepo(initializers.DB).GetUserByID(userId)
+	if userErr != nil || user.DeletedAt.Valid {
+		return nil, ErrAccountNotFoundOrDeleted
+	}
+
+	return user, nil
+}
+
+func UserExists(ctx *gin.Context) {
+	user, validationErr := ValidateAuthToken(ctx)
+	if validationErr != nil {
+		utils.JsonErrorResponse(ctx, http.StatusUnauthorized, "unauthorized", validationErr.Error())
+	}
+
+	ctx.Set("userId", user.ID.String())
+	ctx.Next()
+}
+
+func VerifiedEmailRequired(ctx *gin.Context) {
+	user, validationErr := ValidateAuthToken(ctx)
+	if validationErr != nil {
+		utils.JsonErrorResponse(ctx, http.StatusUnauthorized, "unauthorized", ErrAccountNotFoundOrDeleted.Error())
+		ctx.Abort()
+		return
+	}
+	if user.EmailVerifiedAt == nil {
+		utils.JsonErrorResponse(ctx, http.StatusUnauthorized, "unauthorized", ErrEmailNotVerified.Error())
 		ctx.Abort()
 		return
 	}
 
-	ctx.Set("userId", userId)
+	ctx.Set("userId", user.ID.String())
 	ctx.Next()
-}
-
-func verifyAuthUser(userId uuid.UUID) error {
-	user, userErr := users.NewUserRepo(initializers.DB).GetUserByID(userId)
-	if userErr != nil || user.DeletedAt.Valid {
-		return ErrAccountNotFoundOrDeleted
-	}
-
-	if user.EmailVerifiedAt == nil {
-		return ErrEmailNotVerified
-	}
-
-	return nil
 }
 
 func extractBearerToken(header string) (string, error) {
@@ -65,7 +73,7 @@ func extractBearerToken(header string) (string, error) {
 
 	jwtToken := strings.Split(header, " ")
 	if len(jwtToken) != 2 {
-		return "", ErrInvalidToken
+		return "", ErrInvalidOrExpiredToken
 	}
 
 	return jwtToken[1], nil

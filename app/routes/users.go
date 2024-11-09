@@ -11,8 +11,8 @@ import (
 func RouteHandlers(r *gin.Engine) {
 	app := base.New(*config.Configs, initializers.DB).LoadControllers()
 	v1 := r.Group("api/v1")
-	authRequired := v1.Group("/")
-	authRequired.Use(middlewares.AuthMiddleware)
+	verifiedEmailRequired := v1.Group("/")
+	verifiedEmailRequired.Use(middlewares.VerifiedEmailRequired)
 
 	v1.POST("/", func(ctx *gin.Context) {
 		ctx.JSON(200, gin.H{
@@ -23,5 +23,5 @@ func RouteHandlers(r *gin.Engine) {
 	//authentication and authorization routes
 	v1.POST("signup", app.AuthC.SignUp)
 	v1.POST("login", app.AuthC.Login)
-	authRequired.PUT("verify-email", app.AuthC.VerifyEmail)
+	v1.PUT("verify-email", middlewares.UserExists, app.AuthC.VerifyEmail)
 }
