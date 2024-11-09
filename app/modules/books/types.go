@@ -16,3 +16,21 @@ type BookRepoInterface interface {
 	GetAuthorBooks(authorID uuid.UUID) ([]Book, error)
 	GetBooksByPublisher(publisher string) ([]Book, error)
 }
+
+type service struct {
+	bookRepo BookRepoInterface
+}
+
+type ServiceInterface interface {
+	CreateBook(userId uuid.UUID, data CreateBookRequest) (*Book, error)
+	// UpdateBook(book *Book) error
+	// GetBookByID(id uint) (*Book, error)
+}
+
+type controller struct {
+	bookService ServiceInterface
+}
+
+type ControllerInterface interface {
+	// CreateBook(book *Book) error
+}
