@@ -1,6 +1,7 @@
 package books
 
 import (
+	"github.com/3cognito/library/app/modules/cloudinary"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -18,11 +19,12 @@ type BookRepoInterface interface {
 }
 
 type service struct {
-	bookRepo BookRepoInterface
+	bookRepo   BookRepoInterface
+	cloudinary cloudinary.CloudinaryServiceInterface
 }
 
 type ServiceInterface interface {
-	CreateBook(userId uuid.UUID, data CreateBookRequest) (*Book, error)
+	AddBook(userId uuid.UUID, data CreateBookRequest) (*Book, error)
 	// UpdateBook(book *Book) error
 	// GetBookByID(id uint) (*Book, error)
 }

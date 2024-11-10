@@ -44,7 +44,7 @@ func (c *controller) CreateBook(ctx *gin.Context) {
 		return
 	}
 
-	book, err := c.bookService.CreateBook(userId, params)
+	book, err := c.bookService.AddBook(userId, params)
 	if err != nil {
 		utils.JsonErrorResponse(ctx, http.StatusBadRequest, RequestSuccessful, err.Error())
 		return
