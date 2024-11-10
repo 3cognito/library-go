@@ -21,7 +21,7 @@ func NewService(
 
 }
 
-func (c *cloudinaryService) UploadImage(file *multipart.FileHeader, fileType FileType) (FileData, error) {
+func (c *cloudinaryService) UploadFile(file *multipart.FileHeader, fileType FileType) (FileData, error) {
 	var data FileData
 	fileData, validationErr := utils.ValidateFile(file, c.parseFileType(fileType))
 	if validationErr != nil {
@@ -65,7 +65,7 @@ func (c *cloudinaryService) UploadImage(file *multipart.FileHeader, fileType Fil
 	return data, nil
 }
 
-func (c *cloudinaryService) DeleteImage(publicID string) error {
+func (c *cloudinaryService) DeleteFile(publicID string) error {
 	ctx := context.Background()
 	_, err := c.client.Upload.Destroy(ctx, uploader.DestroyParams{
 		PublicID: publicID,
