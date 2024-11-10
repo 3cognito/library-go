@@ -10,7 +10,7 @@ type CreateBookRequest struct {
 	Pages           int                   `json:"pages"`
 	Language        string                `json:"language"`
 	Description     string                `json:"description"`
-	Genres          string                `json:"genres"`
+	Genres          []string              `json:"genres"`
 	BookFile        *multipart.FileHeader `json:"book_file"`
 	ImageFile       *multipart.FileHeader `json:"image_file"`
 }

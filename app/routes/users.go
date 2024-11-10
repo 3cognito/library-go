@@ -24,4 +24,8 @@ func RouteHandlers(r *gin.Engine) {
 	v1.POST("signup", app.AuthC.SignUp)
 	v1.POST("login", app.AuthC.Login)
 	v1.PUT("verify-email", middlewares.UserExists, app.AuthC.VerifyEmail)
+
+	//books routes
+	books := verifiedEmailRequired.Group("books")
+	books.POST("/", app.BooksC.AddBook)
 }
