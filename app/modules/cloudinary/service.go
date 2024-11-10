@@ -2,7 +2,6 @@ package cloudinary
 
 import (
 	"context"
-	"io"
 	"mime/multipart"
 
 	"github.com/3cognito/library/app/config"
@@ -34,17 +33,6 @@ func (c *cloudinaryService) UploadFile(file *multipart.FileHeader, fileType File
 	}
 	defer openedFile.Close()
 
-	buffer := make([]byte, fileData.Size)
-	for {
-		_, err := openedFile.Read(buffer)
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			return data, err
-		}
-	}
-
 	uploadParams := uploader.UploadParams{
 		Folder: CLOUDINARY__APP_FOLDER,
 	}
@@ -56,11 +44,11 @@ func (c *cloudinaryService) UploadFile(file *multipart.FileHeader, fileType File
 		return data, uploadErr
 	}
 
+	data.Name = fileData.Name
+	data.Size = fileData.Size
 	data.URL = uploadResult.SecureURL
 	data.Extension = uploadResult.Format
 	data.PublicID = uploadResult.PublicID
-
-	utils.ConvertStruct(fileData, &data)
 
 	return data, nil
 }
