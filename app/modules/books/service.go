@@ -18,7 +18,7 @@ func NewService(
 }
 
 func (s *service) AddBook(userId uuid.UUID, data CreateBookRequest) (*Book, error) {
-	publicationDate, publicationDateErr := utils.ParseStringTime(data.PublicationDate)
+	publicationDate, publicationDateErr := utils.ParseStringDate(data.PublicationDate)
 	if publicationDateErr != nil {
 		return nil, publicationDateErr
 	}

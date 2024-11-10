@@ -2,6 +2,7 @@ package books
 
 import (
 	"github.com/3cognito/library/app/modules/cloudinary"
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -34,5 +35,5 @@ type controller struct {
 }
 
 type ControllerInterface interface {
-	// CreateBook(book *Book) error
+	AddBook(ctx *gin.Context)
 }

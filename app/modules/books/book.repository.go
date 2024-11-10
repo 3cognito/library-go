@@ -1,6 +1,7 @@
 package books
 
 import (
+	"github.com/3cognito/library/app/utils"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -18,7 +19,7 @@ func (b *bookRepo) CreateBook(book *Book) error {
 func (b *bookRepo) GetBookByID(id uint) (*Book, error) {
 	var book Book
 	err := b.db.First(&book, id).Error
-	return &book, err
+	return &book, utils.CheckUniqueConstrainstErr(err)
 }
 
 func (b *bookRepo) Save(book *Book) error {
