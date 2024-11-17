@@ -108,6 +108,24 @@ func (a *authService) VerifyEmail(data VerifyEmailRequest) error {
 	return nil
 }
 
+func (a *authService) ForgotPassword(email string) error {
+	user, userErr := a.userRepo.GetUserByEmail(email)
+	if userErr != nil {
+		return ErrAccountNotFound
+	}
+
+	otp, err := a.otpService.CreateOtp(user.ID, otp.PasswordReset, ADayHence)
+	if err != nil {
+		//log issue
+		return err
+	}
+
+	a.triggerPasswordResetNotification(user.Email, otp.Value)
+
+	return nil
+
+}
+
 func generateAccessToken(userId uuid.UUID, jwtKey []uint8, expiryDuration time.Duration) (string, error) {
 	claims := jwt.RegisteredClaims{
 		Subject:   userId.String(),

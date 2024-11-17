@@ -80,3 +80,24 @@ func (a *authController) VerifyEmail(ctx *gin.Context) {
 
 	utils.JsonSuccessResponse(ctx, http.StatusOK, "verification successful", nil)
 }
+
+func (a *authController) ForgotPassword(ctx *gin.Context) {
+	var params ForgotPasswordRequest
+
+	if !utils.ValidParams(ctx, &params) {
+		return
+	}
+
+	if !utils.IsValidEmail(params.Email) {
+		utils.JsonErrorResponse(ctx, http.StatusBadRequest, "invalid email address", ErrInvalidEmail.Error())
+		return
+	}
+
+	err := a.authService.ForgotPassword(params.Email)
+	if err != nil && err != ErrAccountNotFound {
+		utils.JsonErrorResponse(ctx, http.StatusBadRequest, "error sending password reset email", err.Error())
+		return
+	}
+
+	utils.JsonSuccessResponse(ctx, http.StatusOK, "password reset otp sent to provided email address", nil)
+}
