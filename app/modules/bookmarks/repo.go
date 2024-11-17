@@ -1,4 +1,4 @@
-package books
+package bookmarks
 
 import "gorm.io/gorm"
 

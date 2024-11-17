@@ -1,4 +1,4 @@
-package books
+package bookmarks
 
 //add to bookmark
 //remove from bookmark

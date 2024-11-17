@@ -15,10 +15,6 @@ type deletedBookRepo struct {
 	db *gorm.DB
 }
 
-type bookMarkRepo struct {
-	db *gorm.DB
-}
-
 type controller struct {
 	bookService ServiceInterface
 }
@@ -43,8 +39,6 @@ type BookRepoInterface interface {
 type DeletedBookRepoInterface interface {
 	CreateEntry(book *DeletedBook) error
 }
-
-type BookMarkRepoInterface interface{}
 
 type ControllerInterface interface {
 	AddBook(ctx *gin.Context)
