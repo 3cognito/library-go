@@ -5,11 +5,11 @@ import (
 )
 
 func NewDeletedBookRepo(db *gorm.DB) DeletedBookRepoInterface {
-	return &bookRepo{
+	return &deletedBookRepo{
 		db: db,
 	}
 }
 
-func (b *bookRepo) CreateEntry(book *DeletedBook) error {
+func (b *deletedBookRepo) CreateEntry(book *DeletedBook) error {
 	return b.db.Create(book).Error
 }

@@ -42,6 +42,7 @@ func ConnectDB() {
 
 	err = db.AutoMigrate(
 		&users.User{}, &books.Book{}, &books.DeletedBook{},
+		&books.BookMark{},
 		&otp.Otp{},
 	)
 

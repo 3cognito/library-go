@@ -11,6 +11,24 @@ type bookRepo struct {
 	db *gorm.DB
 }
 
+type deletedBookRepo struct {
+	db *gorm.DB
+}
+
+type bookMarkRepo struct {
+	db *gorm.DB
+}
+
+type controller struct {
+	bookService ServiceInterface
+}
+
+type service struct {
+	bookRepo        BookRepoInterface
+	deletedBookRepo DeletedBookRepoInterface
+	cloudinary      cloudinary.CloudinaryServiceInterface
+}
+
 type BookRepoInterface interface {
 	BeginTrx() *gorm.DB
 	CreateBook(book *Book) error
@@ -26,10 +44,15 @@ type DeletedBookRepoInterface interface {
 	CreateEntry(book *DeletedBook) error
 }
 
-type service struct {
-	bookRepo        BookRepoInterface
-	deletedBookRepo DeletedBookRepoInterface
-	cloudinary      cloudinary.CloudinaryServiceInterface
+type BookMarkRepoInterface interface{}
+
+type ControllerInterface interface {
+	AddBook(ctx *gin.Context)
+	DeleteBook(ctx *gin.Context)
+	GetAuthorBooks(ctx *gin.Context)
+	GetBook(ctx *gin.Context)
+	UpdateBookFiles(ctx *gin.Context)
+	UpdateBookDetails(ctx *gin.Context)
 }
 
 type ServiceInterface interface {
@@ -39,17 +62,4 @@ type ServiceInterface interface {
 	UpdateBookFiles(authorId, bookId uuid.UUID, data UpdateBookFilesRequest) (*Book, error)
 	UpdateBookDetails(authorId, bookId uuid.UUID, data UpdateBookDetailsRequest) (*Book, error)
 	GetBookByID(id uuid.UUID) (*Book, error)
-}
-
-type controller struct {
-	bookService ServiceInterface
-}
-
-type ControllerInterface interface {
-	AddBook(ctx *gin.Context)
-	DeleteBook(ctx *gin.Context)
-	GetAuthorBooks(ctx *gin.Context)
-	GetBook(ctx *gin.Context)
-	UpdateBookFiles(ctx *gin.Context)
-	UpdateBookDetails(ctx *gin.Context)
 }
