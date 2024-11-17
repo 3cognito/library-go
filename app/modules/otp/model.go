@@ -3,6 +3,7 @@ package otp
 import (
 	"time"
 
+	"github.com/3cognito/library/app/utils"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -21,12 +22,12 @@ type Otp struct {
 }
 
 func (o *Otp) IsExpired() bool {
-	return o.ExpiresAt.Before(time.Now())
+	return o.ExpiresAt.Before(utils.TimeNow())
 }
 
 // any problems with this? seems pretty straightforward to me
 func (o *Otp) InValidate() {
-	now := time.Now()
+	now := utils.TimeNow()
 	o.ExpiresAt = now
 	o.UsedAt = &now
 }

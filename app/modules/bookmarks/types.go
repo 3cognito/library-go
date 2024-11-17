@@ -1,9 +1,32 @@
 package bookmarks
 
-import "gorm.io/gorm"
+import (
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+)
 
-type bookMarkRepo struct {
+type bookmarkRepo struct {
 	db *gorm.DB
 }
 
-type BookMarkRepoInterface interface{}
+type bookmarkService struct {
+	repo BookmarkRepoInterface
+}
+
+type bookmarkController struct {
+	service BookmarkServiceInterface
+}
+
+type BookmarkRepoInterface interface {
+	Create(bookmark *Bookmark) error
+	GetUserBookMarks(userID uuid.UUID) ([]Bookmark, error)
+	DeleteBookMark(userID, bookID uuid.UUID) error
+}
+
+type BookmarkServiceInterface interface {
+	AddToBookmark(userId, bookId uuid.UUID) error
+	RemoveFromBookmark(userId, bookId uuid.UUID) error
+	GetUserBookMarks(userId uuid.UUID) ([]Bookmark, error)
+}
+
+type BookmarkControllerInterface interface{}

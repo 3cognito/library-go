@@ -15,7 +15,7 @@ type Bookmark struct {
 	User         users.User     `json:"-"`
 	BookID       uuid.UUID      `gorm:"not null;uniqueIndex:,composite:user_id_book_id" json:"book_id"`
 	Book         books.Book     `json:"-"`
-	BookMarkedAt *time.Time     `gorm:"type:TIMESTAMP" json:"book_marked_at"`
+	BookmarkedAt *time.Time     `gorm:"type:TIMESTAMP" json:"book_marked_at"`
 	CreatedAt    time.Time      `gorm:"not null;type:TIMESTAMP;" json:"created_at"`
 	UpdatedAt    time.Time      `gorm:"not null;type:TIMESTAMP;" json:"updated_at"`
 	DeletedAt    gorm.DeletedAt `gorm:"type:TIMESTAMP; index"`
