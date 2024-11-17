@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/3cognito/library/app/config"
+	"github.com/3cognito/library/app/modules/bookmarks"
 	"github.com/3cognito/library/app/modules/books"
 	"github.com/3cognito/library/app/modules/otp"
 	"github.com/3cognito/library/app/modules/users"
@@ -42,7 +43,7 @@ func ConnectDB() {
 
 	err = db.AutoMigrate(
 		&users.User{}, &books.Book{}, &books.DeletedBook{},
-		&books.BookMark{},
+		&bookmarks.Bookmark{},
 		&otp.Otp{},
 	)
 

@@ -9,11 +9,11 @@ import (
 	"gorm.io/gorm"
 )
 
-type BookMark struct {
+type Bookmark struct {
 	ID           string         `json:"id"`
-	UserID       uuid.UUID      `gorm:"type:uuid;not null,index:,composite:idx_user_book" json:"user_id"`
+	UserID       uuid.UUID      `gorm:"not null;uniqueIndex:,composite:user_id_book_id" json:"user_id"`
 	User         users.User     `json:"-"`
-	BookID       uuid.UUID      `gorm:"type:uuid;not null,index:,composite:idx_user_book" json:"book_id"`
+	BookID       uuid.UUID      `gorm:"not null;uniqueIndex:,composite:user_id_book_id" json:"book_id"`
 	Book         books.Book     `json:"-"`
 	BookMarkedAt *time.Time     `gorm:"type:TIMESTAMP" json:"book_marked_at"`
 	CreatedAt    time.Time      `gorm:"not null;type:TIMESTAMP;" json:"created_at"`
