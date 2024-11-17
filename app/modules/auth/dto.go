@@ -38,3 +38,13 @@ type VerifyEmailRequest struct {
 	Otp    string    `json:"otp"`
 	UserID uuid.UUID `json:"user_id"`
 }
+
+type ForgotPasswordRequest struct {
+	Email string `json:"email"`
+}
+
+type ResetPasswordRequest struct {
+	Otp      string `json:"otp"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}

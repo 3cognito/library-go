@@ -8,3 +8,10 @@ func (a *authService) triggerEmailVerificationNotification(recipient, otp string
 
 	go a.emailService.SendEmailToUser(recipient, header, content)
 }
+
+func (a *authService) triggerPasswordResetNotification(recipient, otp string) {
+	header := email.EmailTemplates[email.ResetPasswordSubject].Header
+	content := email.EmailTemplates[email.ResetPasswordSubject].Content(otp)
+
+	go a.emailService.SendEmailToUser(recipient, header, content)
+}
