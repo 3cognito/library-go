@@ -12,6 +12,7 @@ type bookRepo struct {
 }
 
 type BookRepoInterface interface {
+	BeginTrx() *gorm.DB
 	CreateBook(book *Book) error
 	GetBookByID(id uuid.UUID) (*Book, error)
 	Save(book *Book) error
@@ -21,9 +22,14 @@ type BookRepoInterface interface {
 	GetAuthorBook(authorID, bookID uuid.UUID) (*Book, error)
 }
 
+type DeletedBookRepoInterface interface {
+	CreateEntry(book *DeletedBook) error
+}
+
 type service struct {
-	bookRepo   BookRepoInterface
-	cloudinary cloudinary.CloudinaryServiceInterface
+	bookRepo        BookRepoInterface
+	deletedBookRepo DeletedBookRepoInterface
+	cloudinary      cloudinary.CloudinaryServiceInterface
 }
 
 type ServiceInterface interface {

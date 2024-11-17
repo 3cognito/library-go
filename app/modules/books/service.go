@@ -9,11 +9,13 @@ import (
 
 func NewService(
 	bookRepo BookRepoInterface,
+	deletedBookRepo DeletedBookRepoInterface,
 	cloudinary cloudinary.CloudinaryServiceInterface,
 ) ServiceInterface {
 	return &service{
-		bookRepo:   bookRepo,
-		cloudinary: cloudinary,
+		bookRepo:        bookRepo,
+		cloudinary:      cloudinary,
+		deletedBookRepo: deletedBookRepo,
 	}
 }
 
@@ -64,7 +66,7 @@ func (s *service) DeleteBook(userId, bookId uuid.UUID) error {
 		return ErrResourceNotFound
 	}
 
-	if err := s.bookRepo.DeleteBook(bookId); err != nil {
+	if err := s.deleteBook(book); err != nil {
 		return err
 	}
 
@@ -83,6 +85,23 @@ func (s *service) GetBookByID(id uuid.UUID) (*Book, error) {
 		return nil, ErrResourceNotFound
 	}
 	return book, nil
+}
+func (s *service) deleteBook(book *Book) error {
+	var deletedBook DeletedBook
+	tx := s.bookRepo.BeginTrx()
+	if err := s.bookRepo.DeleteBook(book.ID); err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	utils.ConvertStruct(book, &deletedBook)
+
+	if err := s.deletedBookRepo.CreateEntry(&deletedBook); err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return nil
 }
 
 func (s *service) deleteBookDataFromCloudinary(book *Book) error {

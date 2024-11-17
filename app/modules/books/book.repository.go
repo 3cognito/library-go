@@ -12,6 +12,10 @@ func NewBookRepo(db *gorm.DB) BookRepoInterface {
 	}
 }
 
+func (b *bookRepo) BeginTrx() *gorm.DB {
+	return b.db.Begin()
+}
+
 func (b *bookRepo) CreateBook(book *Book) error {
 	res := b.db.Create(book)
 	return utils.CheckUniqueConstrainstErr(res.Error)
@@ -46,5 +50,5 @@ func (b *bookRepo) GetBooksByPublisher(publisher string) ([]Book, error) {
 }
 
 func (b *bookRepo) DeleteBook(id uuid.UUID) error {
-	return b.db.Delete(&Book{}, id).Error
+	return b.db.Unscoped().Delete(&Book{}, id).Error
 }

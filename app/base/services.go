@@ -25,5 +25,5 @@ func (b *base) WithCloudinaryService() cloudinary.CloudinaryServiceInterface {
 }
 
 func (b *base) WithBookService() books.ServiceInterface {
-	return books.NewService(b.WithBookRepo(), b.WithCloudinaryService())
+	return books.NewService(b.WithBookRepo(), b.WithDeletedBookRepo(), b.WithCloudinaryService())
 }
