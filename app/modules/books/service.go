@@ -86,6 +86,66 @@ func (s *service) GetBookByID(id uuid.UUID) (*Book, error) {
 	}
 	return book, nil
 }
+
+func (s *service) UpdateBookFiles(authorId, bookId uuid.UUID, data UpdateBookFilesRequest) (*Book, error) {
+	book, err := s.bookRepo.GetAuthorBook(authorId, bookId)
+	if err != nil {
+		return nil, ErrResourceNotFound
+	}
+
+	if data.BookFile != nil {
+		uploadBookData, uploadBookDataErr := s.cloudinary.UploadFile(data.BookFile, cloudinary.Book)
+		if uploadBookDataErr != nil {
+			return nil, uploadBookDataErr
+		}
+
+		book.BookFileUrl = uploadBookData.URL
+		book.BookFilePublicID = uploadBookData.PublicID
+		book.BookFileSize = int(uploadBookData.Size)
+		book.BookFileName = uploadBookData.Name
+		book.BookFileExtension = uploadBookData.Extension
+	}
+
+	if data.ImageFile != nil {
+		uploadImageData, uploadImageDataErr := s.cloudinary.UploadFile(data.ImageFile, cloudinary.Image)
+		if uploadImageDataErr != nil {
+			return nil, uploadImageDataErr
+		}
+
+		book.CoverImageUrl = uploadImageData.URL
+		book.CoverImagePublicID = uploadImageData.PublicID
+	}
+
+	if err := s.bookRepo.Save(book); err != nil {
+		return nil, err
+	}
+
+	return book, nil
+}
+
+func (s *service) UpdateBookDetails(authorId, bookId uuid.UUID, data UpdateBookDetailsRequest) (*Book, error) {
+	book, err := s.bookRepo.GetAuthorBook(authorId, bookId)
+	if err != nil {
+		return nil, ErrResourceNotFound
+	}
+
+	publication_date, dateErr := utils.ParseStringDate(data.PublicationDate)
+	if dateErr != nil {
+		return nil, dateErr
+	}
+
+	book.Title = data.Title
+	book.ISBN = data.ISBN
+	book.Publisher = &data.Publisher
+	book.PublicationDate = &publication_date
+	book.Pages = data.Pages
+	book.Language = data.Language
+	book.Description = &data.Description
+	book.Genres = pq.StringArray(data.Genres)
+
+	return nil, nil
+}
+
 func (s *service) deleteBook(book *Book) error {
 	var deletedBook DeletedBook
 	tx := s.bookRepo.BeginTrx()

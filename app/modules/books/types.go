@@ -36,7 +36,8 @@ type ServiceInterface interface {
 	AddBook(userId uuid.UUID, data CreateBookRequest) (*Book, error)
 	DeleteBook(userId, bookId uuid.UUID) error
 	GetAuthorBooks(authorID uuid.UUID) ([]Book, error)
-	// UpdateBook(book *Book) error
+	UpdateBookFiles(authorId, bookId uuid.UUID, data UpdateBookFilesRequest) (*Book, error)
+	UpdateBookDetails(authorId, bookId uuid.UUID, data UpdateBookDetailsRequest) (*Book, error)
 	GetBookByID(id uuid.UUID) (*Book, error)
 }
 
@@ -49,4 +50,6 @@ type ControllerInterface interface {
 	DeleteBook(ctx *gin.Context)
 	GetAuthorBooks(ctx *gin.Context)
 	GetBook(ctx *gin.Context)
+	UpdateBookFiles(ctx *gin.Context)
+	UpdateBookDetails(ctx *gin.Context)
 }

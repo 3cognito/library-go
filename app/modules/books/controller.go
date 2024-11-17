@@ -20,18 +20,14 @@ func (c *controller) AddBook(ctx *gin.Context) {
 	var params CreateBookRequest
 
 	bookFile, bookFileErr := ctx.FormFile("bookFile")
-	if bookFileErr != nil {
-		utils.JsonErrorResponse(ctx, http.StatusBadRequest, BadRequest, bookFileErr.Error())
-		return
+	if bookFileErr == nil {
+		params.BookFile = bookFile
 	}
-	params.BookFile = bookFile
 
 	imageFile, imageFileErr := ctx.FormFile("imageFile")
-	if imageFileErr != nil {
-		utils.JsonErrorResponse(ctx, http.StatusBadRequest, BadRequest, imageFileErr.Error())
-		return
+	if imageFileErr == nil {
+		params.ImageFile = imageFile
 	}
-	params.ImageFile = imageFile
 
 	pages, pageErr := utils.StringToInt(ctx.PostForm("pages"))
 	if pageErr != nil {
@@ -113,6 +109,67 @@ func (c *controller) GetBook(ctx *gin.Context) {
 	}
 
 	book, err := c.bookService.GetBookByID(bookId)
+	if err != nil {
+		utils.JsonErrorResponse(ctx, http.StatusBadRequest, RequestFailed, err.Error())
+		return
+	}
+
+	utils.JsonSuccessResponse(ctx, http.StatusOK, RequestSuccessful, book)
+}
+
+func (c *controller) UpdateBookFiles(ctx *gin.Context) {
+	var params UpdateBookFilesRequest
+	authorId, parseErr := uuid.Parse(ctx.GetString("userId"))
+	if parseErr != nil {
+		utils.JsonErrorResponse(ctx, http.StatusBadRequest, BadRequest, parseErr.Error())
+		return
+	}
+
+	bookFile, bookFileErr := ctx.FormFile("bookFile")
+	if bookFileErr == nil {
+		params.BookFile = bookFile
+	}
+
+	imageFile, imageFileErr := ctx.FormFile("imageFile")
+	if imageFileErr == nil {
+		params.ImageFile = imageFile
+	}
+
+	bookId, parseErr := uuid.Parse(ctx.Param("bookId"))
+	if parseErr != nil {
+		utils.JsonErrorResponse(ctx, http.StatusBadRequest, BadRequest, parseErr.Error())
+		return
+	}
+
+	book, err := c.bookService.UpdateBookFiles(authorId, bookId, params)
+	if err != nil {
+		utils.JsonErrorResponse(ctx, http.StatusBadRequest, RequestFailed, err.Error())
+		return
+	}
+
+	utils.JsonSuccessResponse(ctx, http.StatusOK, RequestSuccessful, book)
+}
+
+func (c *controller) UpdateBookDetails(ctx *gin.Context) {
+	var params UpdateBookDetailsRequest
+	authorId, parseErr := uuid.Parse(ctx.GetString("userId"))
+	if parseErr != nil {
+		utils.JsonErrorResponse(ctx, http.StatusBadRequest, BadRequest, parseErr.Error())
+		return
+	}
+
+	if !utils.ValidParams(ctx, &params) {
+		utils.JsonErrorResponse(ctx, http.StatusBadRequest, BadRequest, "All fields are required")
+		return
+	}
+
+	bookId, parseErr := uuid.Parse(ctx.Param("bookId"))
+	if parseErr != nil {
+		utils.JsonErrorResponse(ctx, http.StatusBadRequest, BadRequest, parseErr.Error())
+		return
+	}
+
+	book, err := c.bookService.UpdateBookDetails(authorId, bookId, params)
 	if err != nil {
 		utils.JsonErrorResponse(ctx, http.StatusBadRequest, RequestFailed, err.Error())
 		return

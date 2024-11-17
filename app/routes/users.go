@@ -31,4 +31,6 @@ func RouteHandlers(r *gin.Engine) {
 	books.DELETE("/:bookId", app.BooksC.DeleteBook)
 	books.GET("/", app.BooksC.GetAuthorBooks)
 	books.GET("/:bookId", app.BooksC.GetBook)
+	books.PUT("/:bookId/files", app.BooksC.UpdateBookFiles)
+	books.PUT("/:bookId/details", app.BooksC.UpdateBookDetails)
 }
