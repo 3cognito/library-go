@@ -3,6 +3,7 @@ package base
 import (
 	"github.com/3cognito/library/app/config"
 	"github.com/3cognito/library/app/modules/auth"
+	"github.com/3cognito/library/app/modules/bookmarks"
 	"github.com/3cognito/library/app/modules/books"
 	"gorm.io/gorm"
 )
@@ -13,6 +14,7 @@ type base struct {
 }
 
 type appControllers struct {
-	AuthC  auth.AuthControllerInterface
-	BooksC books.ControllerInterface
+	AuthC      auth.AuthControllerInterface
+	BooksC     books.ControllerInterface
+	BookmarksC bookmarks.BookmarkControllerInterface
 }

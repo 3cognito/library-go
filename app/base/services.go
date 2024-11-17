@@ -2,6 +2,7 @@ package base
 
 import (
 	"github.com/3cognito/library/app/modules/auth"
+	"github.com/3cognito/library/app/modules/bookmarks"
 	"github.com/3cognito/library/app/modules/books"
 	"github.com/3cognito/library/app/modules/cloudinary"
 	"github.com/3cognito/library/app/modules/email"
@@ -26,4 +27,8 @@ func (b *base) WithCloudinaryService() cloudinary.CloudinaryServiceInterface {
 
 func (b *base) WithBookService() books.ServiceInterface {
 	return books.NewService(b.WithBookRepo(), b.WithDeletedBookRepo(), b.WithCloudinaryService())
+}
+
+func (b *base) WithBookmarkService() bookmarks.BookmarkServiceInterface {
+	return bookmarks.NewService(b.WithBookmarksRepo())
 }

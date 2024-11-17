@@ -17,6 +17,7 @@ func (b *base) LoadControllers() appControllers {
 
 	c.AuthC = b.WithAuthController()
 	c.BooksC = b.WithBookController()
+	c.BookmarksC = b.WithBookmarkController()
 
 	return c
 }
