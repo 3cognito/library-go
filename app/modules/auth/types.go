@@ -18,6 +18,7 @@ type AuthServiceInterface interface {
 	Login(data LoginRequest) (LoggedInResponse, error)
 	VerifyEmail(data VerifyEmailRequest) error
 	ForgotPassword(email string) error
+	ResetPassword(data ResetPasswordRequest) (LoggedInResponse, error)
 }
 
 type authController struct {
@@ -29,4 +30,5 @@ type AuthControllerInterface interface {
 	Login(ctx *gin.Context)
 	VerifyEmail(ctx *gin.Context)
 	ForgotPassword(ctx *gin.Context)
+	ResetPassword(ctx *gin.Context)
 }

@@ -89,13 +89,7 @@ func (a *authService) VerifyEmail(data VerifyEmailRequest) error {
 		return ErrAccountNotFound
 	}
 
-	otp, err := a.otpService.GetOtpByUseCase(data.UserID, otp.EmailVerifcation)
-	if err != nil || otp.Value != data.Otp {
-		return ErrOtpExpiredOrInvalid
-	}
-
-	if err := a.otpService.InValidateOtp(otp); err != nil {
-		//log error - returning user readable error
+	if err := a.validateIncomingOtp(user.ID, otp.EmailVerifcation, data.Otp); err != nil {
 		return ErrOtpExpiredOrInvalid
 	}
 
@@ -123,7 +117,48 @@ func (a *authService) ForgotPassword(email string) error {
 	a.triggerPasswordResetNotification(user.Email, otp.Value)
 
 	return nil
+}
 
+func (a *authService) ResetPassword(data ResetPasswordRequest) (LoggedInResponse, error) {
+	var res LoggedInResponse
+	user, err := a.userRepo.GetUserByEmail(data.Email)
+	if err != nil {
+		return res, ErrAccountNotFound
+	}
+
+	if err := a.validateIncomingOtp(user.ID, otp.PasswordReset, data.Otp); err != nil {
+		return res, ErrOtpExpiredOrInvalid
+	}
+
+	user.Password = utils.HashData(data.Password)
+	if err := a.userRepo.UpdateUser(user); err != nil {
+		return res, err
+	}
+
+	expiryDuration := utils.ParseAccessTokenExpiryDuration(config.Configs.AccessTokenExpiryDuration)
+	token, tokenErr := generateAccessToken(user.ID, []byte(config.Configs.AppJWTSecret), expiryDuration)
+	if tokenErr != nil {
+		return res, tokenErr
+	}
+
+	res.Token = token
+	utils.ConvertStruct(user, &res.User)
+
+	return res, nil
+}
+
+func (a *authService) validateIncomingOtp(userId uuid.UUID, useCase otp.UseCase, incomingOtp string) error {
+	otp, err := a.otpService.GetOtpByUseCase(userId, useCase)
+	if err != nil || otp.Value != incomingOtp {
+		return ErrOtpExpiredOrInvalid
+	}
+
+	if err := a.otpService.InValidateOtp(otp); err != nil {
+		//log error - returning user readable error
+		return ErrOtpExpiredOrInvalid
+	}
+
+	return nil
 }
 
 func generateAccessToken(userId uuid.UUID, jwtKey []uint8, expiryDuration time.Duration) (string, error) {
