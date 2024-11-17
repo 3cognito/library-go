@@ -11,8 +11,8 @@ type cloudinaryService struct {
 }
 
 type CloudinaryServiceInterface interface {
-	UploadImage(file *multipart.FileHeader, fileType FileType) (FileData, error)
-	DeleteImage(publicID string) error
+	UploadFile(file *multipart.FileHeader, fileType FileType) (FileData, error)
+	DeleteFile(publicID string) error
 }
 
 type FileData struct {

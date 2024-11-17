@@ -24,4 +24,13 @@ func RouteHandlers(r *gin.Engine) {
 	v1.POST("signup", app.AuthC.SignUp)
 	v1.POST("login", app.AuthC.Login)
 	v1.PUT("verify-email", middlewares.UserExists, app.AuthC.VerifyEmail)
+
+	//books routes
+	books := verifiedEmailRequired.Group("books")
+	books.POST("/", app.BooksC.AddBook)
+	books.DELETE("/:bookId", app.BooksC.DeleteBook)
+	books.GET("/", app.BooksC.GetAuthorBooks)
+	books.GET("/:bookId", app.BooksC.GetBook)
+	books.PUT("/:bookId/files", app.BooksC.UpdateBookFiles)
+	books.PUT("/:bookId/details", app.BooksC.UpdateBookDetails)
 }

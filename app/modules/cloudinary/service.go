@@ -2,7 +2,7 @@ package cloudinary
 
 import (
 	"context"
-	"io"
+	"errors"
 	"mime/multipart"
 
 	"github.com/3cognito/library/app/config"
@@ -21,7 +21,7 @@ func NewService(
 
 }
 
-func (c *cloudinaryService) UploadImage(file *multipart.FileHeader, fileType FileType) (FileData, error) {
+func (c *cloudinaryService) UploadFile(file *multipart.FileHeader, fileType FileType) (FileData, error) {
 	var data FileData
 	fileData, validationErr := utils.ValidateFile(file, c.parseFileType(fileType))
 	if validationErr != nil {
@@ -34,17 +34,6 @@ func (c *cloudinaryService) UploadImage(file *multipart.FileHeader, fileType Fil
 	}
 	defer openedFile.Close()
 
-	buffer := make([]byte, fileData.Size)
-	for {
-		_, err := openedFile.Read(buffer)
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			return data, err
-		}
-	}
-
 	uploadParams := uploader.UploadParams{
 		Folder: CLOUDINARY__APP_FOLDER,
 	}
@@ -56,16 +45,20 @@ func (c *cloudinaryService) UploadImage(file *multipart.FileHeader, fileType Fil
 		return data, uploadErr
 	}
 
+	if uploadResult.Error.Message != "" {
+		return data, errors.New(uploadResult.Error.Message)
+	}
+
+	data.Name = fileData.Name
+	data.Size = fileData.Size
 	data.URL = uploadResult.SecureURL
 	data.Extension = uploadResult.Format
 	data.PublicID = uploadResult.PublicID
 
-	utils.ConvertStruct(fileData, &data)
-
 	return data, nil
 }
 
-func (c *cloudinaryService) DeleteImage(publicID string) error {
+func (c *cloudinaryService) DeleteFile(publicID string) error {
 	ctx := context.Background()
 	_, err := c.client.Upload.Destroy(ctx, uploader.DestroyParams{
 		PublicID: publicID,

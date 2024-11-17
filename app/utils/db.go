@@ -21,5 +21,9 @@ func CheckUniqueConstrainstErr(err error) error {
 		return ErrProfilePictureUrlAlreadyExists
 	}
 
+	if strings.Contains(errMsg, "isbn") {
+		return ErrISBNAlreadyExists
+	}
+
 	return err
 }

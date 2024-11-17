@@ -14,6 +14,10 @@ func (b *base) WithBookRepo() books.BookRepoInterface {
 	return books.NewBookRepo(b.db)
 }
 
+func (b *base) WithDeletedBookRepo() books.DeletedBookRepoInterface {
+	return books.NewDeletedBookRepo(b.db)
+}
+
 func (b *base) WithOtpRepo() otp.OtpRepoInterface {
 	return otp.NewOtpRepo(b.db)
 }

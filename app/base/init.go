@@ -16,6 +16,7 @@ func (b *base) LoadControllers() appControllers {
 	var c appControllers
 
 	c.AuthC = b.WithAuthController()
+	c.BooksC = b.WithBookController()
 
 	return c
 }

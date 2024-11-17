@@ -3,6 +3,7 @@ package utils
 import (
 	"encoding/json"
 	"errors"
+	"strconv"
 )
 
 func ConvertStruct(data interface{}, result interface{}) error {
@@ -37,4 +38,13 @@ func ConvertDataToMapWithError(data interface{}) (map[string]interface{}, error)
 	}
 
 	return result, nil
+}
+
+func StringToInt(s string) (int, error) {
+	num, err := strconv.Atoi(s)
+	if err != nil {
+		return 0, err
+	}
+
+	return num, nil
 }

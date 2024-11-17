@@ -14,6 +14,7 @@ var (
 	ErrFileNotProvided                = errors.New("file not provided")
 	ErrFileTooLarge                   = errors.New("file too large")
 	ErrUnsupportedFileType            = errors.New("unsupported file type")
+	ErrISBNAlreadyExists              = errors.New("isbn already exists")
 )
 
 const (

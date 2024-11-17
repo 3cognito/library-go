@@ -40,7 +40,7 @@ func ValidateFile(file *multipart.FileHeader, fileType FileType) (FileData, erro
 }
 
 func isSupportedImageExtension(fileName string) bool {
-	supportedExtensions := []string{"jpg", "jpeg", "png"}
+	supportedExtensions := []string{".jpg", ".jpeg", ".png"}
 	for _, ext := range supportedExtensions {
 		if ext == fileName {
 			return true
@@ -51,7 +51,7 @@ func isSupportedImageExtension(fileName string) bool {
 }
 
 func isSupportedBookExtension(fileName string) bool {
-	supportedExtensions := []string{"pdf", "epub"}
+	supportedExtensions := []string{".pdf", ".epub"}
 	for _, ext := range supportedExtensions {
 		if ext == fileName {
 			return true
