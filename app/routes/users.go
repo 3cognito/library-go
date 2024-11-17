@@ -36,4 +36,12 @@ func RouteHandlers(r *gin.Engine) {
 	books.GET("/:bookId", app.BooksC.GetBook)
 	books.PUT("/:bookId/files", app.BooksC.UpdateBookFiles)
 	books.PUT("/:bookId/details", app.BooksC.UpdateBookDetails)
+
+	//bookmarks routes
+	bookmarks := verifiedEmailRequired.Group("bookmarks")
+
+	bookmarks.POST("/:bookId", app.BookmarksC.AddToBookmark)
+	bookmarks.DELETE("/:bookId", app.BookmarksC.RemoveFromBookmark)
+	bookmarks.GET("/", app.BookmarksC.GetUserBookMarks)
+
 }

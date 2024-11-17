@@ -1,6 +1,7 @@
 package bookmarks
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -29,4 +30,8 @@ type BookmarkServiceInterface interface {
 	GetUserBookMarks(userId uuid.UUID) ([]Bookmark, error)
 }
 
-type BookmarkControllerInterface interface{}
+type BookmarkControllerInterface interface {
+	AddToBookmark(ctx *gin.Context)
+	RemoveFromBookmark(ctx *gin.Context)
+	GetUserBookMarks(ctx *gin.Context)
+}
