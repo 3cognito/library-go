@@ -2,6 +2,7 @@ package cloudinary
 
 import (
 	"context"
+	"errors"
 	"mime/multipart"
 
 	"github.com/3cognito/library/app/config"
@@ -42,6 +43,10 @@ func (c *cloudinaryService) UploadFile(file *multipart.FileHeader, fileType File
 	uploadResult, uploadErr := c.client.Upload.Upload(ctx, openedFile, uploadParams)
 	if uploadErr != nil {
 		return data, uploadErr
+	}
+
+	if uploadResult.Error.Message != "" {
+		return data, errors.New(uploadResult.Error.Message)
 	}
 
 	data.Name = fileData.Name

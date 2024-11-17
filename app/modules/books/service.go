@@ -57,3 +57,42 @@ func (s *service) AddBook(userId uuid.UUID, data CreateBookRequest) (*Book, erro
 
 	return book, nil
 }
+
+func (s *service) DeleteBook(userId, bookId uuid.UUID) error {
+	book, bookErr := s.bookRepo.GetAuthorBook(userId, bookId)
+	if bookErr != nil {
+		return ErrResourceNotFound
+	}
+
+	if err := s.bookRepo.DeleteBook(bookId); err != nil {
+		return err
+	}
+
+	go s.deleteBookDataFromCloudinary(book)
+
+	return nil
+}
+
+func (s *service) GetAuthorBooks(authorID uuid.UUID) ([]Book, error) {
+	return s.bookRepo.GetAuthorBooks(authorID)
+}
+
+func (s *service) GetBookByID(id uuid.UUID) (*Book, error) {
+	book, err := s.bookRepo.GetBookByID(id)
+	if err != nil {
+		return nil, ErrResourceNotFound
+	}
+	return book, nil
+}
+
+func (s *service) deleteBookDataFromCloudinary(book *Book) error {
+	if err := s.cloudinary.DeleteFile(book.BookFilePublicID); err != nil {
+		//log error
+		return err
+	}
+
+	if err := s.cloudinary.DeleteFile(book.CoverImagePublicID); err != nil {
+		return err
+	}
+	return nil
+}

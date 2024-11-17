@@ -13,10 +13,12 @@ type bookRepo struct {
 
 type BookRepoInterface interface {
 	CreateBook(book *Book) error
-	GetBookByID(id uint) (*Book, error)
+	GetBookByID(id uuid.UUID) (*Book, error)
 	Save(book *Book) error
 	GetAuthorBooks(authorID uuid.UUID) ([]Book, error)
 	GetBooksByPublisher(publisher string) ([]Book, error)
+	DeleteBook(id uuid.UUID) error
+	GetAuthorBook(authorID, bookID uuid.UUID) (*Book, error)
 }
 
 type service struct {
@@ -26,8 +28,10 @@ type service struct {
 
 type ServiceInterface interface {
 	AddBook(userId uuid.UUID, data CreateBookRequest) (*Book, error)
+	DeleteBook(userId, bookId uuid.UUID) error
+	GetAuthorBooks(authorID uuid.UUID) ([]Book, error)
 	// UpdateBook(book *Book) error
-	// GetBookByID(id uint) (*Book, error)
+	GetBookByID(id uuid.UUID) (*Book, error)
 }
 
 type controller struct {
@@ -36,4 +40,7 @@ type controller struct {
 
 type ControllerInterface interface {
 	AddBook(ctx *gin.Context)
+	DeleteBook(ctx *gin.Context)
+	GetAuthorBooks(ctx *gin.Context)
+	GetBook(ctx *gin.Context)
 }

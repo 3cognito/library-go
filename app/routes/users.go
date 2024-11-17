@@ -28,4 +28,7 @@ func RouteHandlers(r *gin.Engine) {
 	//books routes
 	books := verifiedEmailRequired.Group("books")
 	books.POST("/", app.BooksC.AddBook)
+	books.DELETE("/:bookId", app.BooksC.DeleteBook)
+	books.GET("/", app.BooksC.GetAuthorBooks)
+	books.GET("/:bookId", app.BooksC.GetBook)
 }

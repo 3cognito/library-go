@@ -66,3 +66,57 @@ func (c *controller) AddBook(ctx *gin.Context) {
 
 	utils.JsonSuccessResponse(ctx, http.StatusCreated, RequestSuccessful, book)
 }
+
+func (c *controller) DeleteBook(ctx *gin.Context) {
+	userId, parseErr := uuid.Parse(ctx.GetString("userId"))
+	if parseErr != nil {
+		utils.JsonErrorResponse(ctx, http.StatusBadRequest, BadRequest, parseErr.Error())
+		return
+	}
+
+	bookId, parseErr := uuid.Parse(ctx.Param("bookId"))
+	if parseErr != nil {
+		utils.JsonErrorResponse(ctx, http.StatusBadRequest, BadRequest, parseErr.Error())
+		return
+	}
+
+	err := c.bookService.DeleteBook(userId, bookId)
+	if err != nil {
+		utils.JsonErrorResponse(ctx, http.StatusBadRequest, RequestFailed, err.Error())
+		return
+	}
+
+	utils.JsonSuccessResponse(ctx, http.StatusOK, RequestSuccessful, nil)
+}
+
+func (c *controller) GetAuthorBooks(ctx *gin.Context) {
+	userId, parseErr := uuid.Parse(ctx.GetString("userId"))
+	if parseErr != nil {
+		utils.JsonErrorResponse(ctx, http.StatusBadRequest, BadRequest, parseErr.Error())
+		return
+	}
+
+	books, err := c.bookService.GetAuthorBooks(userId)
+	if err != nil {
+		utils.JsonErrorResponse(ctx, http.StatusBadRequest, RequestFailed, err.Error())
+		return
+	}
+
+	utils.JsonSuccessResponse(ctx, http.StatusOK, RequestSuccessful, books)
+}
+
+func (c *controller) GetBook(ctx *gin.Context) {
+	bookId, parseErr := uuid.Parse(ctx.Param("bookId"))
+	if parseErr != nil {
+		utils.JsonErrorResponse(ctx, http.StatusBadRequest, BadRequest, parseErr.Error())
+		return
+	}
+
+	book, err := c.bookService.GetBookByID(bookId)
+	if err != nil {
+		utils.JsonErrorResponse(ctx, http.StatusBadRequest, RequestFailed, err.Error())
+		return
+	}
+
+	utils.JsonSuccessResponse(ctx, http.StatusOK, RequestSuccessful, book)
+}
