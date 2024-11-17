@@ -1,6 +1,7 @@
 package bookmarks
 
 import (
+	commons "github.com/3cognito/library/app/common"
 	"github.com/3cognito/library/app/utils"
 	"github.com/google/uuid"
 )
@@ -33,7 +34,7 @@ func (s *bookmarkService) AddToBookmark(userId, bookId uuid.UUID) error {
 func (s *bookmarkService) RemoveFromBookmark(userId, bookId uuid.UUID) error {
 	err := s.repo.DeleteBookMark(userId, bookId)
 	if err != nil {
-		return ErrResourceNotFound
+		return commons.ErrResourceNotFound
 	}
 
 	return nil

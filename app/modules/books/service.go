@@ -1,6 +1,7 @@
 package books
 
 import (
+	commons "github.com/3cognito/library/app/common"
 	"github.com/3cognito/library/app/modules/cloudinary"
 	"github.com/3cognito/library/app/utils"
 	"github.com/google/uuid"
@@ -63,7 +64,7 @@ func (s *service) AddBook(userId uuid.UUID, data CreateBookRequest) (*Book, erro
 func (s *service) DeleteBook(userId, bookId uuid.UUID) error {
 	book, bookErr := s.bookRepo.GetAuthorBook(userId, bookId)
 	if bookErr != nil {
-		return ErrResourceNotFound
+		return commons.ErrResourceNotFound
 	}
 
 	if err := s.deleteBook(book); err != nil {
@@ -82,7 +83,7 @@ func (s *service) GetAuthorBooks(authorID uuid.UUID) ([]Book, error) {
 func (s *service) GetBookByID(id uuid.UUID) (*Book, error) {
 	book, err := s.bookRepo.GetBookByID(id)
 	if err != nil {
-		return nil, ErrResourceNotFound
+		return nil, commons.ErrResourceNotFound
 	}
 	return book, nil
 }
@@ -90,7 +91,7 @@ func (s *service) GetBookByID(id uuid.UUID) (*Book, error) {
 func (s *service) UpdateBookFiles(authorId, bookId uuid.UUID, data UpdateBookFilesRequest) (*Book, error) {
 	book, err := s.bookRepo.GetAuthorBook(authorId, bookId)
 	if err != nil {
-		return nil, ErrResourceNotFound
+		return nil, commons.ErrResourceNotFound
 	}
 
 	if data.BookFile != nil {
@@ -126,7 +127,7 @@ func (s *service) UpdateBookFiles(authorId, bookId uuid.UUID, data UpdateBookFil
 func (s *service) UpdateBookDetails(authorId, bookId uuid.UUID, data UpdateBookDetailsRequest) (*Book, error) {
 	book, err := s.bookRepo.GetAuthorBook(authorId, bookId)
 	if err != nil {
-		return nil, ErrResourceNotFound
+		return nil, commons.ErrResourceNotFound
 	}
 
 	publication_date, dateErr := utils.ParseStringDate(data.PublicationDate)

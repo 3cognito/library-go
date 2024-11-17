@@ -1,13 +1,7 @@
-package books
-
-import "errors"
+package commons
 
 const (
 	RequestSuccessful = "request successful"
 	RequestFailed     = "request failed"
 	BadRequest        = "bad request"
-)
-
-var (
-	ErrResourceNotFound = errors.New("resource not found")
 )

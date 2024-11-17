@@ -1,4 +1,4 @@
-package bookmarks
+package commons
 
 import "errors"
 

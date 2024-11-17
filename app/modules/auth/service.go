@@ -93,7 +93,7 @@ func (a *authService) VerifyEmail(data VerifyEmailRequest) error {
 		return ErrOtpExpiredOrInvalid
 	}
 
-	now := time.Now()
+	now := utils.TimeNow()
 	user.EmailVerifiedAt = &now
 	if err := a.userRepo.UpdateUser(user); err != nil {
 		return err
