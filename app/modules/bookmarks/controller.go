@@ -61,7 +61,6 @@ func (c *bookmarkController) RemoveFromBookmark(ctx *gin.Context) {
 }
 
 func (c *bookmarkController) GetUserBookMarks(ctx *gin.Context) {
-
 	parsedUserID, parseErr := uuid.Parse(ctx.GetString("userId"))
 	if parseErr != nil {
 		utils.JsonErrorResponse(ctx, http.StatusBadRequest, commons.BadRequest, parseErr.Error())

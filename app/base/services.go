@@ -30,5 +30,5 @@ func (b *base) WithBookService() books.ServiceInterface {
 }
 
 func (b *base) WithBookmarkService() bookmarks.BookmarkServiceInterface {
-	return bookmarks.NewService(b.WithBookmarksRepo())
+	return bookmarks.NewService(b.WithBookmarksRepo(), b.WithBookRepo())
 }
