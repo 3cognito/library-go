@@ -31,4 +31,5 @@ type UseCase string
 
 const (
 	EmailVerifcation UseCase = "email_verification"
+	PasswordReset    UseCase = "password_reset"
 )

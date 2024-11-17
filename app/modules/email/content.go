@@ -10,10 +10,10 @@ var EmailTemplates = map[string]EmailTemplate{
 			return fmt.Sprintf("Hello, please use this otp to verify your email %s", params...)
 		},
 	},
-	// "RESET_PASSWORD": {
-	// 	Header: "Reset Your Password",
-	// 	Content: func(params ...interface{}) string {
-	// 		return fmt.Sprintf("Hello %s, click this link to reset your password: %s", params...)
-	// 	},
-	// },
+	"RESET_PASSWORD": {
+		Header: "Reset Your Password",
+		Content: func(params ...interface{}) string {
+			return fmt.Sprintf("Hello %s, use this otp to reset your password: %s", params...)
+		},
+	},
 }
