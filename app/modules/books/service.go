@@ -143,7 +143,11 @@ func (s *service) UpdateBookDetails(authorId, bookId uuid.UUID, data UpdateBookD
 	book.Description = &data.Description
 	book.Genres = pq.StringArray(data.Genres)
 
-	return nil, nil
+	if err := s.bookRepo.Save(book); err != nil {
+		return nil, err
+	}
+
+	return book, nil
 }
 
 func (s *service) deleteBook(book *Book) error {
