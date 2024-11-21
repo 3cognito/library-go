@@ -1,6 +1,7 @@
 package bookmarks
 
 import (
+	"github.com/3cognito/library/app/modules/books"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -11,7 +12,8 @@ type bookmarkRepo struct {
 }
 
 type bookmarkService struct {
-	repo BookmarkRepoInterface
+	repo     BookmarkRepoInterface
+	bookRepo books.BookRepoInterface
 }
 
 type bookmarkController struct {

@@ -1,6 +1,10 @@
 package utils
 
-import "strings"
+import (
+	"strings"
+
+	commons "github.com/3cognito/library/app/common"
+)
 
 func CheckUniqueConstrainstErr(err error) error {
 	if err == nil {
@@ -23,6 +27,10 @@ func CheckUniqueConstrainstErr(err error) error {
 
 	if strings.Contains(errMsg, "isbn") {
 		return ErrISBNAlreadyExists
+	}
+
+	if strings.Contains(errMsg, "idx_bookmarks_user_id_book_id") {
+		return commons.ErrBookAlreadyBookmarked
 	}
 
 	return err

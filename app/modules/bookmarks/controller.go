@@ -18,7 +18,7 @@ func NewController(
 }
 
 func (c *bookmarkController) AddToBookmark(ctx *gin.Context) {
-	parsedBookID, parseErr := uuid.Parse(ctx.GetString("bookId"))
+	parsedBookID, parseErr := uuid.Parse(ctx.Param("bookId"))
 	if parseErr != nil {
 		utils.JsonErrorResponse(ctx, http.StatusBadRequest, commons.BadRequest, parseErr.Error())
 		return
@@ -31,16 +31,19 @@ func (c *bookmarkController) AddToBookmark(ctx *gin.Context) {
 	}
 
 	if bookmarkErr := c.service.AddToBookmark(parsedUserID, parsedBookID); bookmarkErr != nil {
+		if bookmarkErr.Error() == commons.ErrResourceNotFound.Error() {
+			utils.JsonErrorResponse(ctx, http.StatusBadRequest, commons.BadRequest, commons.ErrBookAlreadyBookmarked.Error())
+			return
+		}
 		utils.JsonErrorResponse(ctx, http.StatusBadRequest, commons.BadRequest, bookmarkErr.Error())
 		return
 	}
 
 	utils.JsonSuccessResponse(ctx, http.StatusCreated, "book added to bookmark", nil)
-
 }
 
 func (c *bookmarkController) RemoveFromBookmark(ctx *gin.Context) {
-	parsedBookID, parseErr := uuid.Parse(ctx.GetString("bookId"))
+	parsedBookID, parseErr := uuid.Parse(ctx.Param("bookId"))
 	if parseErr != nil {
 		utils.JsonErrorResponse(ctx, http.StatusBadRequest, commons.BadRequest, parseErr.Error())
 		return
@@ -61,7 +64,6 @@ func (c *bookmarkController) RemoveFromBookmark(ctx *gin.Context) {
 }
 
 func (c *bookmarkController) GetUserBookMarks(ctx *gin.Context) {
-
 	parsedUserID, parseErr := uuid.Parse(ctx.GetString("userId"))
 	if parseErr != nil {
 		utils.JsonErrorResponse(ctx, http.StatusBadRequest, commons.BadRequest, parseErr.Error())

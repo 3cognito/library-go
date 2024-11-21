@@ -1,6 +1,7 @@
 package bookmarks
 
 import (
+	"github.com/3cognito/library/app/utils"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -12,7 +13,8 @@ func NewRepo(db *gorm.DB) BookmarkRepoInterface {
 }
 
 func (r *bookmarkRepo) Create(bookmark *Bookmark) error {
-	return r.db.Create(bookmark).Error
+	err := r.db.Create(bookmark).Error
+	return utils.CheckUniqueConstrainstErr(err)
 }
 
 func (r *bookmarkRepo) GetUserBookMarks(userID uuid.UUID) ([]Bookmark, error) {
@@ -27,5 +29,5 @@ func (r *bookmarkRepo) GetUserBookMarks(userID uuid.UUID) ([]Bookmark, error) {
 }
 
 func (r *bookmarkRepo) DeleteBookMark(userID, bookID uuid.UUID) error {
-	return r.db.Where("user_id = ? AND book_id = ?", userID, bookID).Delete(&Bookmark{}).Error
+	return r.db.Where("user_id = ? AND book_id = ?", userID, bookID).Unscoped().Delete(&Bookmark{}).Error
 }

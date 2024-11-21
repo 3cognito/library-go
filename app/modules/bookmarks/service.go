@@ -2,21 +2,29 @@ package bookmarks
 
 import (
 	commons "github.com/3cognito/library/app/common"
+	"github.com/3cognito/library/app/modules/books"
 	"github.com/3cognito/library/app/utils"
 	"github.com/google/uuid"
 )
 
 func NewService(
 	repo BookmarkRepoInterface,
+	bookRepo books.BookRepoInterface,
 ) BookmarkServiceInterface {
 	return &bookmarkService{
-		repo: repo,
+		repo:     repo,
+		bookRepo: bookRepo,
 	}
 }
 
 //TODO: SEARCH USER BOOKMARKS
 
 func (s *bookmarkService) AddToBookmark(userId, bookId uuid.UUID) error {
+	_, bookErr := s.bookRepo.GetBookByID(bookId)
+	if bookErr != nil {
+		return commons.ErrResourceNotFound
+	}
+
 	now := utils.TimeNow()
 	bookmark := &Bookmark{
 		UserID:       userId,
