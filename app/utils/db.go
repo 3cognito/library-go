@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	commons "github.com/3cognito/library/app/common"
+	"gorm.io/gorm"
 )
 
 func CheckUniqueConstrainstErr(err error) error {
@@ -34,4 +35,16 @@ func CheckUniqueConstrainstErr(err error) error {
 	}
 
 	return err
+}
+
+func FindRecordErr(res *gorm.DB) error {
+	if res.Error != nil {
+		return res.Error
+	}
+
+	if res.RowsAffected == 0 {
+		return ErrRecordNotFound
+	}
+
+	return nil
 }
